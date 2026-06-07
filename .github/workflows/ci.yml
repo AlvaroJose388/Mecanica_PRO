@@ -1,0 +1,182 @@
+# ============================================================
+# MecanicaPro - Pipeline de Integración Continua (CI)
+# ============================================================
+# Este workflow se ejecuta automáticamente en cada push y pull request.
+# Implementa el ciclo completo: Build → Lint → TypeCheck → Test
+# ============================================================
+
+name: MecanicaPro CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - 'feature/**'
+      - 'hotfix/**'
+      - 'release/**'
+  pull_request:
+    branches:
+      - main
+      - develop
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  # ──────────────────────────────────────────────────────────────
+  # JOB 1: Instalación de dependencias (cacheo para velocidad)
+  # ──────────────────────────────────────────────────────────────
+  install:
+    name: 📦 Instalar Dependencias
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Cachear node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+
+  # ──────────────────────────────────────────────────────────────
+  # JOB 2: Análisis de código estático (Linting)
+  # ──────────────────────────────────────────────────────────────
+  lint:
+    name: 🔍 Linting (ESLint)
+    runs-on: ubuntu-latest
+    needs: install
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Restaurar node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+
+      - name: Instalar dependencias (fallback)
+        run: npm ci
+
+      - name: Ejecutar ESLint
+        run: npm run lint
+
+  # ──────────────────────────────────────────────────────────────
+  # JOB 3: Verificación de tipos (TypeScript)
+  # ──────────────────────────────────────────────────────────────
+  typecheck:
+    name: 🏗️ TypeScript Check
+    runs-on: ubuntu-latest
+    needs: install
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Restaurar node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+
+      - name: Instalar dependencias (fallback)
+        run: npm ci
+
+      - name: Verificación de tipos
+        run: npm run typecheck
+
+  # ──────────────────────────────────────────────────────────────
+  # JOB 4: Pruebas Unitarias (Jest)
+  # ──────────────────────────────────────────────────────────────
+  test:
+    name: 🧪 Pruebas Unitarias
+    runs-on: ubuntu-latest
+    needs: install
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Restaurar node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+
+      - name: Instalar dependencias (fallback)
+        run: npm ci
+
+      - name: Ejecutar pruebas unitarias
+        run: npm test -- --coverage --ci
+
+      - name: Subir reporte de cobertura
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 7
+
+  # ──────────────────────────────────────────────────────────────
+  # JOB 5: Build de producción
+  # ──────────────────────────────────────────────────────────────
+  build:
+    name: 🚀 Build de Producción
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck, test]
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Restaurar node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+
+      - name: Instalar dependencias (fallback)
+        run: npm ci
+
+      - name: Construir aplicación
+        run: npm run build
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          NEXT_PUBLIC_FIREBASE_API_KEY: ${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}
+
+      - name: Verificar artefactos de build
+        run: |
+          echo "✅ Build completado exitosamente"
+          ls -la .next/ || echo "Directorio .next no encontrado"
