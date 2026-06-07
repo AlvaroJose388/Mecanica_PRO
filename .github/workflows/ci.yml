@@ -10,6 +10,7 @@ name: MecanicaPro CI Pipeline
 on:
   push:
     branches:
+      - master
       - main
       - develop
       - 'feature/**'
@@ -17,6 +18,7 @@ on:
       - 'release/**'
   pull_request:
     branches:
+      - master
       - main
       - develop
 
