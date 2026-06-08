@@ -5,11 +5,12 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/contexts/user-context';
 import { Button } from '@/components/ui/button';
+import { LoadingButton } from '@/components/ui/loading-button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Logo } from '@/components/logo';
-import { useToast } from '@/hooks/use-toast';
-import { Loader2, ArrowRight, CheckCircle2, ChevronLeft, Building2, UserCircle, Target, ShieldCheck, FileText, ScrollText } from 'lucide-react';
+import { useEnhancedToast } from '@/hooks/use-enhanced-toast';
+import { ArrowRight, CheckCircle2, ChevronLeft, Building2, UserCircle, Target, ShieldCheck, FileText, ScrollText } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { registerWorkshopOwner } from '@/app/actions/auth';
 import { cn } from '@/lib/utils';
@@ -21,7 +22,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 export default function RegisterPage() {
     const router = useRouter();
     const { login, user: currentUser } = useUser();
-    const { toast } = useToast();
+    const toast = useEnhancedToast();
     
     const [step, setStep] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
@@ -47,11 +48,11 @@ export default function RegisterPage() {
 
     const handleNext = () => {
         if (step === 1 && (!userName || !email || !password)) {
-            toast({ variant: 'destructive', title: 'Campos requeridos', description: 'Por favor completa tus datos personales.' });
+            toast.error({ title: 'Campos requeridos', description: 'Por favor completa tus datos personales.' });
             return;
         }
         if (step === 2 && (!workshopName || !city || !phone)) {
-            toast({ variant: 'destructive', title: 'Campos requeridos', description: 'Por favor completa los datos de tu empresa.' });
+            toast.error({ title: 'Campos requeridos', description: 'Por favor completa los datos de tu empresa.' });
             return;
         }
         setStep(step + 1);
@@ -61,7 +62,7 @@ export default function RegisterPage() {
 
     const handleRegister = async () => {
         if (!acceptedTerms) {
-            toast({ variant: 'destructive', title: 'Acción Requerida', description: 'Debe aceptar los términos y condiciones de ingeniería.' });
+            toast.error({ title: 'Acción Requerida', description: 'Debe aceptar los términos y condiciones de ingeniería.' });
             return;
         }
 
@@ -77,7 +78,7 @@ export default function RegisterPage() {
                 phone
             });
 
-            toast({ 
+            toast.success({ 
                 title: '¡Registro Exitoso!', 
                 description: 'Configurando su Centro de Mando Certificado... (Simulación de correo activa)' 
             });
@@ -87,7 +88,7 @@ export default function RegisterPage() {
                 window.location.href = '/dashboard';
             }
         } catch (error) {
-            toast({ variant: 'destructive', title: 'Error de Registro', description: (error as Error).message });
+            toast.error({ title: 'Error de Registro', description: (error as Error).message });
             setIsLoading(false);
         }
     };
@@ -315,17 +316,19 @@ export default function RegisterPage() {
                                 Continuar <ArrowRight className="ml-3 h-5 w-5" />
                             </Button>
                         ) : (
-                            <Button 
+                            <LoadingButton 
                                 onClick={handleRegister}
-                                disabled={isLoading || !acceptedTerms}
+                                isLoading={isLoading}
+                                loadingText="ACTIVANDO..."
+                                disabled={!acceptedTerms}
                                 className={cn(
                                     "h-16 px-16 rounded-[1.5rem] shadow-2xl transition-all active:scale-95 font-black uppercase tracking-[0.2em] text-xs w-full sm:w-auto",
                                     acceptedTerms ? "bg-slate-950 text-white hover:bg-primary shadow-primary/30" : "bg-slate-300 text-slate-500 cursor-not-allowed border-2 border-slate-400"
                                 )}
                             >
-                                {isLoading ? <Loader2 className="mr-3 h-5 w-5 animate-spin" /> : <Target className="mr-3 h-5 w-5" />}
+                                <Target className="mr-3 h-5 w-5" />
                                 ACTIVAR SISTEMA PRO
-                            </Button>
+                            </LoadingButton>
                         )}
                     </div>
                 </div>

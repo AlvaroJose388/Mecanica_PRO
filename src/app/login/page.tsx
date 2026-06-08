@@ -4,11 +4,12 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/contexts/user-context';
 import { Button } from '@/components/ui/button';
+import { LoadingButton } from '@/components/ui/loading-button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Logo } from '@/components/logo';
-import { useToast } from '@/hooks/use-toast';
-import { Loader2, ShieldCheck, ArrowRight, Home, CheckCircle2 } from 'lucide-react';
+import { useEnhancedToast } from '@/hooks/use-enhanced-toast';
+import { ShieldCheck, ArrowRight, Home, CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Link from 'next/link';
@@ -16,7 +17,7 @@ import Link from 'next/link';
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useUser();
-  const { toast } = useToast();
+  const toast = useEnhancedToast();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -27,8 +28,7 @@ export default function LoginPage() {
     const cleanEmail = email.trim();
     
     if (!cleanEmail || !password) {
-        toast({
-            variant: 'destructive',
+        toast.error({
             title: 'Campos incompletos',
             description: 'Por favor, ingresa tu correo corporativo y contraseña.',
         });
@@ -39,19 +39,17 @@ export default function LoginPage() {
     try {
         const loggedInUser = await login(cleanEmail, password);
         if (loggedInUser) {
-          toast({ title: 'Acceso Autorizado', description: `Bienvenido al nodo central, ${loggedInUser.name}.` });
+          toast.success({ title: 'Acceso Autorizado', description: `Bienvenido al nodo central, ${loggedInUser.name}.` });
           router.push(loggedInUser.role === 'Mecánico' ? '/orders' : '/dashboard');
         } else {
-          toast({
-            variant: 'destructive',
+          toast.error({
             title: 'Error de Credenciales',
             description: 'El correo o la clave no coinciden con nuestros registros.',
           });
           setIsLoading(false);
         }
     } catch (error: any) {
-        toast({
-            variant: 'destructive',
+        toast.error({
             title: 'Fallo Crítico de Nodo',
             description: 'No se pudo establecer conexión con el servidor de seguridad.',
         });
@@ -147,20 +145,15 @@ export default function LoginPage() {
                   className="h-16 bg-white border-2 border-slate-100 focus-visible:ring-primary/20 rounded-3xl px-6 text-base text-slate-950 font-black placeholder:text-slate-300 placeholder:font-bold shadow-sm transition-all focus:border-primary/30"
                 />
               </div>
-              <Button 
+              <LoadingButton 
                 onClick={handleLogin} 
-                disabled={isLoading}
+                isLoading={isLoading}
+                loadingText="INICIANDO..."
                 className="h-20 text-lg font-black shadow-2xl shadow-primary/30 hover:shadow-primary/50 transition-all rounded-[2rem] mt-4 uppercase tracking-[0.3em] bg-slate-950 text-white hover:bg-primary border-none active:scale-95"
               >
-                {isLoading ? (
-                  <Loader2 className="mr-3 h-6 w-6 animate-spin" />
-                ) : (
-                  <>
-                    INICIAR SISTEMAS
-                    <ArrowRight className="ml-3 h-6 w-6" strokeWidth={3} />
-                  </>
-                )}
-              </Button>
+                INICIAR SISTEMAS
+                <ArrowRight className="ml-3 h-6 w-6" strokeWidth={3} />
+              </LoadingButton>
             </div>
             
             <div className="text-center space-y-4">
