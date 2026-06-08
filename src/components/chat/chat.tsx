@@ -5,7 +5,7 @@ import {Avatar, AvatarFallback, AvatarImage} from '@/components/ui/avatar';
 import {getInitials} from '@/lib/utils/get-initials';
 import {Input} from '@/components/ui/input';
 import {Button} from '@/components/ui/button';
-import {Send, Camera, Mic, Video, Smile, Paperclip, Trash2, StopCircle, FileText, Download, MoreVertical, ShieldCheck, CheckCheck } from 'lucide-react';
+import {Send, Camera, Mic, Video, Smile, Paperclip, Trash2, StopCircle, FileText, Download, MoreVertical, ShieldCheck, CheckCheck, Loader2 } from 'lucide-react';
 import { ImageMessage } from './image-message';
 import type {Message, User, Conversation} from '@/lib/types';
 import {useRef, useEffect, useState} from 'react';
