@@ -119,7 +119,7 @@ export function ChatList({
                                         className="w-full flex items-center gap-4 p-3 rounded-[1.5rem] text-left hover:bg-slate-50 transition-all group"
                                     >
                                         <Avatar className="h-11 w-11 border-2 border-white shadow-md shrink-0">
-                                            <AvatarImage src={user.avatarUrl} alt={user.name}/>
+                                            <AvatarImage src={user.avatarUrl || undefined} alt={user.name}/>
                                             <AvatarFallback className="bg-primary/5 text-primary text-xs font-black">{getInitials(user.name)}</AvatarFallback>
                                         </Avatar>
                                         <div className="overflow-hidden">
@@ -167,7 +167,7 @@ export function ChatList({
                         <div className="relative shrink-0">
                             <Avatar className={cn("h-12 w-12 border-2 shadow-md transition-transform", isSelected ? "border-primary/30" : "border-white")}>
                                 <AvatarImage
-                                    src={conversation.otherParticipant?.avatarUrl}
+                                    src={conversation.otherParticipant?.avatarUrl || undefined}
                                     alt={conversation.otherParticipant?.name}
                                 />
                                 <AvatarFallback className="bg-slate-100 text-slate-400 text-xs font-black">

@@ -360,7 +360,7 @@ export default function UsersPage() {
                     <TableCell className="font-medium">
                         <div className="flex items-center gap-3">
                             <Avatar className="h-9 w-9 border shadow-sm">
-                                <AvatarImage src={user.avatarUrl} alt={user.name} />
+                                <AvatarImage src={user.avatarUrl || undefined} alt={user.name} />
                                 <AvatarFallback className="bg-primary/5 text-primary font-bold">
                                     {getInitials(user.name)}
                                 </AvatarFallback>

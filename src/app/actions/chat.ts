@@ -89,6 +89,7 @@ export async function getOrCreateConversation(userId1: string, userId2: string):
         role: otherParticipantUser.role,
         avatarUrl: otherParticipantUser.avatarUrl,
         workshopId: otherParticipantUser.workshopId,
+        createdAt: otherParticipantUser.createdAt ? new Date(otherParticipantUser.createdAt).toISOString() : new Date().toISOString(),
      } : undefined;
 
 

@@ -142,7 +142,7 @@ export default function AgendaPage() {
       `Hola ${appointment.client.name}, te recordamos tu cita técnica en MecanicaPro para el servicio de "${appointment.service}" el día ${appointmentDate} a las ${appointmentTime}. ¡Te esperamos en el centro certificado!`
     );
 
-    const whatsappUrl = `https://wa.me/${appointment.client.phone.replace(/\D/g, '')}?text=${message}`;
+    const whatsappUrl = `https://wa.me/${appointment.client.phone?.replace(/\D/g, '')}?text=${message}`;
     
     window.open(whatsappUrl, '_blank');
   };

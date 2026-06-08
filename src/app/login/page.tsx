@@ -39,8 +39,13 @@ export default function LoginPage() {
     try {
         const loggedInUser = await login(cleanEmail, password);
         if (loggedInUser) {
+<<<<<<< HEAD
           toast.success({ title: 'Acceso Autorizado', description: `Bienvenido al nodo central, ${loggedInUser.name}.` });
           router.push(loggedInUser.role === 'Mecánico' ? '/orders' : '/dashboard');
+=======
+          toast({ title: 'Acceso Autorizado', description: `Bienvenido al nodo central, ${loggedInUser.name}.` });
+          router.push(loggedInUser.role === 'Mechanic' ? '/orders' : '/dashboard');
+>>>>>>> feature/daniel
         } else {
           toast.error({
             title: 'Error de Credenciales',
@@ -175,3 +180,4 @@ export default function LoginPage() {
     </div>
   );
 }
+

@@ -1,46 +1,40 @@
 "use client"
+import { useToast } from "@/hooks/use-toast"
+import type { ToastProps } from "@/components/ui/toast"
 
-import { useToast as useToastBase } from "@/hooks/use-toast"
-import type { ToastActionElement } from "@/components/ui/toast"
-
-interface EnhancedToastProps {
+export interface EnhancedToastProps extends Omit<ToastProps, 'variant' | 'title' | 'description'> {
   title?: string
-  description?: React.ReactNode
-  action?: ToastActionElement
-  duration?: number
+  description?: string
 }
 
-type ToastVariant = "default" | "destructive" | "success" | "warning" | "info"
-
 export function useEnhancedToast() {
-  const { toast } = useToastBase()
-
-  const showToast = (variant: ToastVariant, props: EnhancedToastProps) => {
-    const icons = {
-      default: null,
-      destructive: "❌",
-      success: "✅",
-      warning: "⚠️",
-      info: "ℹ️",
-    }
-
-    const icon = icons[variant]
-    const title = props.title ? `${icon ? icon + " " : ""}${props.title}` : undefined
-
-    return toast({
-      ...props,
-      title,
-      variant: variant as any,
-      duration: props.duration || 3000,
-    })
-  }
+  const { toast: baseToast } = useToast()
 
   return {
-    success: (props: EnhancedToastProps) => showToast("success", props),
-    error: (props: EnhancedToastProps) => showToast("destructive", props),
-    warning: (props: EnhancedToastProps) => showToast("warning", props),
-    info: (props: EnhancedToastProps) => showToast("info", props),
-    default: (props: EnhancedToastProps) => showToast("default", props),
-    toast,
+    success: (props: EnhancedToastProps) =>
+      baseToast({
+        ...props,
+        variant: "success" as const,
+      }),
+    error: (props: EnhancedToastProps) =>
+      baseToast({
+        ...props,
+        variant: "destructive" as const,
+      }),
+    warning: (props: EnhancedToastProps) =>
+      baseToast({
+        ...props,
+        variant: "warning" as const,
+      }),
+    info: (props: EnhancedToastProps) =>
+      baseToast({
+        ...props,
+        variant: "info" as const,
+      }),
+    default: (props: EnhancedToastProps) =>
+      baseToast({
+        ...props,
+        variant: "default" as const,
+      }),
   }
 }

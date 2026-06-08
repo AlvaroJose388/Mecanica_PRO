@@ -66,9 +66,8 @@ export async function createInvoice(orderId: string): Promise<Invoice> {
     orderId: order.id,
     clientId: order.clientId,
     workshopId: order.workshopId,
-    amount: Number(order.total),
+    amount: String(Number(order.total).toFixed(2)),
     status: 'Pending' as const,
-    createdAt: new Date(),
     dueDate: new Date(new Date().setDate(new Date().getDate() + 14)).toISOString().split('T')[0],
   };
 

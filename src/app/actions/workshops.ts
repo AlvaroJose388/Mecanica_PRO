@@ -18,6 +18,7 @@ export async function getWorkshops(): Promise<Workshop[]> {
     ...w,
     branches: allBranches.filter(b => b.workshopId === w.id),
     type: w.type as WorkshopType | undefined,
+    createdAt: w.createdAt ? new Date(w.createdAt).toISOString() : undefined,
   }));
 }
 
@@ -32,7 +33,8 @@ export async function getWorkshopById(id: string): Promise<Workshop | null> {
     return {
         ...result[0],
         type: result[0].type as WorkshopType | undefined,
-        branches: workshopBranches
+        branches: workshopBranches,
+        createdAt: result[0].createdAt ? new Date(result[0].createdAt).toISOString() : undefined,
     };
 }
 
@@ -64,7 +66,8 @@ export async function createWorkshop(workshopData: Partial<Workshop>, ownerId: s
   return {
     ...createdWorkshop[0],
     type: createdWorkshop[0].type as WorkshopType | undefined,
-    branches: [mainBranch]
+    branches: [mainBranch],
+    createdAt: createdWorkshop[0].createdAt ? new Date(createdWorkshop[0].createdAt).toISOString() : undefined,
   };
 }
 
@@ -114,7 +117,8 @@ export async function updateWorkshop(workshopId: string, workshopData: Partial<W
   return {
       ...updatedWorkshop[0],
       type: updatedWorkshop[0].type as WorkshopType | undefined,
-      branches: updatedBranches
+      branches: updatedBranches,
+      createdAt: updatedWorkshop[0].createdAt ? new Date(updatedWorkshop[0].createdAt).toISOString() : undefined,
   };
 }
 

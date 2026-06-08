@@ -21,5 +21,29 @@ export async function generateClientNotification(input: ClientNotificationInput)
     }
 }
 
+export type TechnicalAssistantOutput = {
+    analysis: string;
+    steps: string[];
+    tools: string[];
+};
+
+export async function askTechnicalAssistant(input: { query: string; vehicleInfo?: string }): Promise<TechnicalAssistantOutput> {
+    try {
+        // Placeholder for actual AI implementation
+        return {
+            analysis: `Análisis de: ${input.query}`,
+            steps: ["Paso 1: Diagnóstico inicial", "Paso 2: Revisión de componentes", "Paso 3: Recomendaciones"],
+            tools: ["Escáner OBD2", "Multímetro", "Herramienta de diagnóstico"]
+        };
+    } catch (error) {
+        console.error("Technical Assistant Error:", error);
+        return {
+            analysis: "No se pudo procesar la solicitud",
+            steps: ["Reintentar la operación"],
+            tools: []
+        };
+    }
+}
+
 // Re-exporting types
 export type { ClientNotificationInput };
