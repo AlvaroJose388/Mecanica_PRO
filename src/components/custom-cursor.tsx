@@ -82,7 +82,6 @@ export function CustomCursor() {
       )}
       style={{
         willChange: 'transform',
-        transform: `translate3d(${positionRef.current.x}px, ${positionRef.current.y}px, 0) translate(-20%, -20%) rotate(-10deg)`,
       }}
     >
       <Wrench size={24} strokeWidth={2.5} fill="currentColor" fillOpacity={isHovering ? 0.2 : 0} />

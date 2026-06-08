@@ -38,7 +38,6 @@ export async function createUser(userData: User): Promise<User> {
   };
   
   const result = await db.insert(users).values(newUser).returning();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { passwordHash: _, ...userToReturn } = result[0];
   return {
     ...userToReturn,
@@ -56,7 +55,6 @@ export async function updateUser(userId: string, userData: Partial<User>): Promi
   delete updateData.password;
   
   const result = await db.update(users).set(updateData).where(eq(users.id, userId)).returning();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { passwordHash, ...userToReturn } = result[0];
   return {
     ...userToReturn,
