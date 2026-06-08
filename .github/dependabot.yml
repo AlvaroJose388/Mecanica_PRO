@@ -1,0 +1,26 @@
+version: 2
+updates:
+  # Actualizaciones semanales de npm
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "03:00"
+    open-pull-requests-limit: 5
+    pull-request-branch-name:
+      separator: "/"
+    reviewers:
+      - "AlvaroJose388"
+    assignees:
+      - "AlvaroJose388"
+    commit-message:
+      prefix: "chore: "
+      prefix-scope: "deps"
+      include: "scope"
+    allow:
+      - dependency-type: "all"
+    ignore:
+      # Ignorar major versions de paquetes críticos
+      - dependency-name: "next"
+        update-types: ["version-update:semver-major"]
