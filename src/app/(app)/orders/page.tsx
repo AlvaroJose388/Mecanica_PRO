@@ -251,8 +251,8 @@ function OrderDetails({ order, onUpdate, allUsers, onNavigateToInvoice }: { orde
     const [status, setStatus] = useState<OrderStatus | undefined>(order?.status);
     const [mechanicId, setMechanicId] = useState(order?.assignedMechanicId);
 
-    const isMechanic = user?.role === 'Mecánico';
-    const mechanics = allUsers.filter(u => u.role === 'Mecánico' && u.workshopId === user?.workshopId);
+    const isMechanic = user?.role === 'Mechanic';
+    const mechanics = allUsers.filter(u => u.role === 'Mechanic' && u.workshopId === user?.workshopId);
 
     useEffect(() => {
         if (order) {
@@ -271,7 +271,7 @@ function OrderDetails({ order, onUpdate, allUsers, onNavigateToInvoice }: { orde
         const messageText = `Hola ${currentOrder.client.name}, te informamos desde ${workshop.name} que tu vehículo (${vehicleDesc}) se encuentra listo para ser recogido tras realizar el servicio de ${serviceDesc}. ¡Te esperamos en nuestro centro certificado!`;
         
         const message = encodeURIComponent(messageText);
-        const whatsappUrl = `https://wa.me/${currentOrder.client.phone.replace(/\D/g, '')}?text=${message}`;
+        const whatsappUrl = `https://wa.me/${currentOrder.client.phone?.replace(/\D/g, '')}?text=${message}`;
         
         toast({
             title: '¡Vehículo Listo!',
@@ -424,7 +424,7 @@ function OrderDetails({ order, onUpdate, allUsers, onNavigateToInvoice }: { orde
                             <div className="space-y-2">
                                 <Label className="text-[10px] font-black uppercase text-slate-900 tracking-widest">Mecánico Asignado</Label>
                                 <div className="flex gap-2">
-                                    <Select value={mechanicId} onValueChange={setMechanicId}>
+                                    <Select value={mechanicId || ''} onValueChange={setMechanicId}>
                                         <SelectTrigger className="rounded-xl h-11 text-slate-950 bg-white border-2 border-slate-200"><SelectValue placeholder="Sin asignar" /></SelectTrigger>
                                         <SelectContent>
                                             {mechanics.map(m => <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>)}
@@ -552,7 +552,7 @@ function OrdersPageContent() {
       setIsLoading(true);
       try {
           let data = await getFullOrdersForWorkshop(user.workshopId);
-          if (user.role === 'Mecánico') {
+          if (user.role === 'Mechanic') {
               data = data.filter(order => order.assignedMechanicId === user.id);
           }
           setOrders(data);
@@ -592,7 +592,7 @@ function OrdersPageContent() {
     router.push(`/invoices?view=${invoiceId}`);
   };
 
-  const isMechanic = user?.role === 'Mecánico';
+  const isMechanic = user?.role === 'Mechanic';
 
   // Nombres de columnas alineados con Informe Maestro (US-03)
   const kanbanColumns: { title: string; status: OrderStatus; color: string }[] = [

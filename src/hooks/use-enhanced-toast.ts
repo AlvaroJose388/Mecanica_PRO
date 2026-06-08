@@ -1,11 +1,11 @@
-"use client"
 
+"use client"
 import { useToast } from "@/hooks/use-toast"
 import type { ToastProps } from "@/components/ui/toast"
 
-export interface EnhancedToastProps extends Omit<ToastProps, 'variant'> {
-  title?: React.ReactNode
-  description?: React.ReactNode
+export interface EnhancedToastProps extends Omit<ToastProps, 'variant' | 'title' | 'description'> {
+  title?: string
+  description?: string
 }
 
 export function useEnhancedToast() {
@@ -17,25 +17,21 @@ export function useEnhancedToast() {
         ...props,
         variant: "success" as const,
       }),
-
     error: (props: EnhancedToastProps) =>
       baseToast({
         ...props,
         variant: "destructive" as const,
       }),
-
     warning: (props: EnhancedToastProps) =>
       baseToast({
         ...props,
         variant: "warning" as const,
       }),
-
     info: (props: EnhancedToastProps) =>
       baseToast({
         ...props,
         variant: "info" as const,
       }),
-
     default: (props: EnhancedToastProps) =>
       baseToast({
         ...props,

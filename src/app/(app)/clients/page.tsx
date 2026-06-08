@@ -452,8 +452,8 @@ export default function ClientsPage() {
       const term = searchTerm.toLowerCase();
       return clients.filter(c => 
         c.name.toLowerCase().includes(term) || 
-        c.email.toLowerCase().includes(term) || 
-        c.phone.includes(term)
+        c.email?.toLowerCase().includes(term) ||
+        c.phone?.includes(term)
       );
   }, [clients, searchTerm]);
 

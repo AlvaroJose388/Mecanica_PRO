@@ -7,9 +7,10 @@ type PageHeaderProps = {
   description?: string;
   children?: ReactNode;
   icon?: LucideIcon;
+  logoUrl?: string | null;
 };
 
-export function PageHeader({ title, description, icon: Icon, children }: PageHeaderProps) {
+export function PageHeader({ title, description, icon: Icon, children, logoUrl }: PageHeaderProps) {
   const DisplayIcon = Icon || Wrench;
 
   return (

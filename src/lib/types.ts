@@ -1,56 +1,51 @@
 export type Role = 'SuperAdmin' | 'TallerAdmin' | 'Recepcionista' | 'Mechanic';
-
 export type User = {
   id: string;
   name: string;
   email: string;
-  password?: string; // This is for frontend forms, will not be stored in DB
-  passwordHash?: string; // from DB
+  password?: string;
+  passwordHash?: string;
   role: Role;
-  avatarUrl: string;
-  workshopId?: string | null; // TallerAdmin, Recepcionista, Mechanic are associated with a workshop
-  emailVerified: boolean;
+  avatarUrl?: string | null;
+  workshopId?: string | null;
+  emailVerified?: boolean | null;
   failedAttempts?: number;
   isLocked?: boolean;
   createdAt: string;
 };
-
 export type SubscriptionPlan = 'Basic' | 'Premium';
-
 export type WorkshopType = 'Automotriz' | 'Motos' | 'Camiones' | 'Mixto';
-
 export type Workshop = {
   id: string;
   name: string;
-  ownerId: string; // ID of the TallerAdmin user
+  ownerId: string;
   subscription: SubscriptionPlan;
   branches: Branch[];
-  logoUrl?: string;
-  primaryColor?: string;
-  accentColor?: string;
-  sidebarBgColor?: string;
-  type?: WorkshopType;
-  employeeCount?: string;
-  city?: string;
-  phone?: string;
+  logoUrl?: string | null;
+  primaryColor?: string | null;
+  accentColor?: string | null;
+  sidebarBgColor?: string | null;
+  type?: WorkshopType | null;
+  employeeCount?: string | null;
+  city?: string | null;
+  phone?: string | null;
+  createdAt?: string | null;
 };
-
 export type Branch = {
   id: string;
   name: string;
-  address: string;
-  phone: string;
+  address?: string | null;
+  phone?: string | null;
+  workshopId?: string;
 };
-
 export type Client = {
   id: string;
   name: string;
-  phone: string;
-  email: string;
-  address: string;
+  phone?: string | null;
+  email?: string | null;
+  address?: string | null;
   workshopId: string;
 };
-
 export type Vehicle = {
   id: string;
   clientId: string;
@@ -62,9 +57,7 @@ export type Vehicle = {
   color?: string | null;
   mileage?: number | null;
 };
-
 export type OrderStatus = 'Pending' | 'InProgress' | 'Ready' | 'Completed' | 'Cancelled';
-
 export type Order = {
   id: string;
   orderNumber: string;
@@ -74,26 +67,24 @@ export type Order = {
   branchId: string;
   status: OrderStatus;
   services: { name: string; price: number }[];
-  parts: { inventoryItemId: string, name: string; price: number; quantity: number }[];
+  parts: { inventoryItemId: string; name: string; price: number; quantity: number }[];
   total: number;
   createdAt: string;
-  assignedMechanicId?: string;
+  assignedMechanicId?: string | null;
   invoice?: Invoice | null;
   vehicle?: Pick<Vehicle, 'plate' | 'brand' | 'model'> | null;
 };
-
 export type InventoryItem = {
   id: string;
   name: string;
-  sku: string;
+  sku?: string | null;
   quantity: number;
   price: number;
+  minStock?: number | null;
   workshopId: string;
   branchId: string;
 };
-
 export type InvoiceStatus = 'Paid' | 'Pending' | 'Overdue';
-
 export type Invoice = {
   id: string;
   invoiceNumber: string;
@@ -104,33 +95,28 @@ export type Invoice = {
   status: InvoiceStatus;
   notes?: string | null;
   createdAt: string;
-  dueDate: string;
+  dueDate?: string | null;
 };
-
 export type Message = {
   id: string;
   senderId: string;
   text: string;
   timestamp: string;
 };
-
 export type Conversation = {
   id: string;
   participantIds: string[];
   messages: Message[];
   otherParticipant?: Omit<User, 'password' | 'passwordHash'>;
 };
-
 export type Appointment = {
-    id: string;
-    workshopId: string;
-    clientId: string;
-    service: string;
-    date: string; // ISO string
+  id: string;
+  workshopId: string;
+  clientId: string;
+  service: string;
+  date: string;
 };
-
 export type SupportTicketStatus = 'Open' | 'Closed';
-
 export type SupportTicket = {
   id: string;
   subject: string;
@@ -147,15 +133,13 @@ export type SupportTicket = {
     name: string;
   } | null;
 };
-
 export type TaskStatus = 'Pending' | 'Completed';
-
 export type Task = {
-    id: string;
-    workshopId: string;
-    title: string;
-    description: string | null;
-    status: TaskStatus;
-    dueDate: string | null;
-    createdAt: string;
+  id: string;
+  workshopId: string;
+  title: string;
+  description?: string | null;
+  status: TaskStatus;
+  dueDate?: string | null;
+  createdAt: string;
 };

@@ -40,7 +40,7 @@ export default function LoginPage() {
         const loggedInUser = await login(cleanEmail, password);
         if (loggedInUser) {
           toast({ title: 'Acceso Autorizado', description: `Bienvenido al nodo central, ${loggedInUser.name}.` });
-          router.push(loggedInUser.role === 'Mecánico' ? '/orders' : '/dashboard');
+          router.push(loggedInUser.role === 'Mechanic' ? '/orders' : '/dashboard');
         } else {
           toast({
             variant: 'destructive',
@@ -182,3 +182,4 @@ export default function LoginPage() {
     </div>
   );
 }
+

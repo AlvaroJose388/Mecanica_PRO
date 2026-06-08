@@ -247,7 +247,7 @@ export function Chat({conversation, currentUser, onSendMessage}: ChatProps) {
             <div className="relative">
                 <Avatar className="h-10 w-10 border-2 border-primary/10 shadow-sm">
                 <AvatarImage 
-                    src={conversation.otherParticipant?.avatarUrl} 
+                    src={conversation.otherParticipant?.avatarUrl || undefined} 
                     alt={conversation.otherParticipant?.name} 
                 />
                 <AvatarFallback className="bg-primary/5 text-primary text-xs font-black">{getInitials(conversation.otherParticipant?.name || 'U')}</AvatarFallback>

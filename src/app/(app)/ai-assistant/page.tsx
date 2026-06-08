@@ -190,7 +190,7 @@ export default function AIAssistantPage() {
                                                         <p className="text-[10px] font-black uppercase tracking-[0.3em]">Protocolo de Ejecución Sugerido:</p>
                                                     </div>
                                                     <div className="grid gap-3">
-                                                        {msg.content.steps.map((step, idx) => (
+                                                        {msg.content.steps.map((step: string, idx: number) => (
                                                             <div key={idx} className="flex gap-4 items-start group p-4 rounded-2xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
                                                                 <div className="h-7 w-7 rounded-xl bg-slate-950 text-white flex items-center justify-center shrink-0 text-xs font-black shadow-lg">
                                                                     {idx + 1}
@@ -202,7 +202,7 @@ export default function AIAssistantPage() {
                                                 </div>
 
                                                 <div className="pt-6 flex flex-wrap gap-2 border-t-2 border-dashed border-slate-100">
-                                                    {msg.content.tools.map(tool => (
+                                                    {msg.content.tools.map((tool: string) => (
                                                         <Badge key={tool} variant="secondary" className="bg-slate-100 text-slate-500 text-[9px] uppercase font-black px-4 py-1.5 border-none shadow-sm">
                                                             {tool}
                                                         </Badge>

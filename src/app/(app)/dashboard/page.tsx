@@ -303,13 +303,13 @@ function SuperAdminDashboard() {
                                         <TableRow key={u.id} className="hover:bg-slate-50 transition-colors">
                                             <TableCell className="px-8 py-4">
                                                 <div className="flex items-center gap-3">
-                                                    <Avatar className="h-8 w-8 border shadow-sm shrink-0">
-                                                        <AvatarImage src={u.avatarUrl} alt={u.name} />
-                                                        <AvatarFallback className="text-[9px] font-black">{getInitials(u.name)}</AvatarFallback>
-                                                    </Avatar>
-                                                    <div className="overflow-hidden">
-                                                        <p className="font-black text-[11px] text-slate-900 uppercase truncate leading-none">{u.name}</p>
-                                                        <p className="text-[9px] text-slate-400 font-bold truncate mt-1">{u.email}</p>
+                                                         <Avatar className="h-8 w-8 border shadow-sm shrink-0">
+                                                         <AvatarImage src={u.avatarUrl ?? undefined} alt={u.name} />
+                                                         <AvatarFallback className="text-[9px] font-black">{getInitials(u.name)}</AvatarFallback>
+                                                        </Avatar>
+                                                     <div className="overflow-hidden">
+                                                    <p className="font-black text-[11px] text-slate-900 uppercase truncate leading-none">{u.name}</p>
+                                                      <p className="text-[9px] text-slate-400 font-bold truncate mt-1">{u.email}</p>
                                                     </div>
                                                 </div>
                                             </TableCell>
@@ -376,7 +376,7 @@ function DefaultDashboard() {
         <div className="space-y-8 animate-in fade-in duration-500">
             <PageHeader
                 icon={LayoutDashboard}
-                title={user?.role === 'Mecánico' ? 'Centro de Operaciones' : `Panel de Dirección Técnica`}
+                title={user?.role === 'Mechanic' ? 'Centro de Operaciones' : `Panel de Dirección Técnica`}
                 description="Monitoreo en tiempo real del rendimiento operativo y financiero certificado."
             >
                 <div className="flex items-center gap-3">
@@ -510,7 +510,7 @@ export default function DashboardPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (user?.role === 'Mecánico') {
+    if (user?.role === 'Mechanic') {
       router.replace('/orders');
     }
   }, [user, router]);
