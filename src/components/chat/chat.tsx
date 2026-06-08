@@ -90,8 +90,15 @@ export function Chat({conversation, currentUser, onSendMessage}: ChatProps) {
         const reader = new FileReader();
         reader.onloadend = () => {
             const base64 = reader.result as string;
-            const fileHint = file.type.includes('pdf') ? '[PDF]' : '[DOC]';
-            onSendMessage({ message: `${fileHint}${file.name}|${base64}`, conversationId: conversation.id });
+            
+            // Si es imagen, enviar directamente como data URL
+            if (file.type.startsWith('image/')) {
+                onSendMessage({ message: base64, conversationId: conversation.id });
+            } else {
+                // Si es PDF o documento, agregar marcador
+                const fileHint = file.type.includes('pdf') ? '[PDF]' : '[DOC]';
+                onSendMessage({ message: `${fileHint}${file.name}|${base64}`, conversationId: conversation.id });
+            }
             setIsUploading(false);
         };
         reader.readAsDataURL(file);
