@@ -326,7 +326,7 @@ export default function InventoryPage() {
                           ))
                       ) : (
                           <div className="p-10 text-center border-2 border-dashed border-white/10 rounded-3xl opacity-40">
-                            <p className="text-[10px] font-black uppercase tracking-[0.3em]">Niveles de stock certificados</p>
+                            <p className="text-[10px] font-black uppercase tracking-[0.3em]">Niveles de stock certificados..</p>
                           </div>
                       )}
                   </CardContent>
