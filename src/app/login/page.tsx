@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -25,7 +25,7 @@ export default function LoginPage() {
 
   const handleLogin = async () => {
     const cleanEmail = email.trim();
-    
+
     if (!cleanEmail || !password) {
         toast({
             variant: 'destructive',
@@ -40,7 +40,7 @@ export default function LoginPage() {
         const loggedInUser = await login(cleanEmail, password);
         if (loggedInUser) {
           toast({ title: 'Acceso Autorizado', description: `Bienvenido al nodo central, ${loggedInUser.name}.` });
-          router.push(loggedInUser.role === 'Mecánico' ? '/orders' : '/dashboard');
+          router.push(loggedInUser.role === 'Mechanic' ? '/orders' : '/dashboard');
         } else {
           toast({
             variant: 'destructive',

@@ -386,11 +386,11 @@ export default function WorkshopSettingsPage() {
                                     </div>
                                     <div className="space-y-2">
                                         <Label htmlFor={`address-${index}`}>Dirección</Label>
-                                        <Input id={`address-${index}`} value={branch.address} onChange={(e) => handleBranchChange(index, e)} />
+                                        <Input id={`address-${index}`} value={branch.address || ''} onChange={(e) => handleBranchChange(index, e)} />
                                     </div>
                                     <div className="space-y-2">
                                         <Label htmlFor={`phone-${index}`}>Teléfono</Label>
-                                        <Input id={`phone-${index}`} value={branch.phone} onChange={(e) => handleBranchChange(index, e)} />
+                                        <Input id={`phone-${index}`} value={branch.phone || ''} onChange={(e) => handleBranchChange(index, e)} />
                                     </div>
                                 </div>
                             </div>

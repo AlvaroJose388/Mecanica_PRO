@@ -43,7 +43,7 @@ export function InvoiceView({ invoice, order, client, workshop }: InvoiceViewPro
                                 Fecha de Emisión: <span className="text-slate-900 font-bold">{format(new Date(invoice.createdAt), "d 'de' LLLL, yyyy", { locale: es })}</span>
                             </p>
                             <p className="text-xs text-muted-foreground">
-                                Fecha de Vencimiento: <span className="text-slate-900 font-bold">{format(new Date(invoice.dueDate), "d 'de' LLLL, yyyy", { locale: es })}</span>
+                                Fecha de Vencimiento: <span className="text-slate-900 font-bold">{invoice.dueDate ? format(new Date(invoice.dueDate), "d 'de' LLLL, yyyy", { locale: es }) : 'N/A'}</span>
                             </p>
                         </div>
                     </div>

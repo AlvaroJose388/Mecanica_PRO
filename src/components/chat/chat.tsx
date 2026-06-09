@@ -5,13 +5,14 @@ import {Avatar, AvatarFallback, AvatarImage} from '@/components/ui/avatar';
 import {getInitials} from '@/lib/utils/get-initials';
 import {Input} from '@/components/ui/input';
 import {Button} from '@/components/ui/button';
-import {Send, Camera, Loader2, Mic, Video, Smile, Paperclip, Trash2, StopCircle, FileText, Download, MoreVertical, ShieldCheck, CheckCheck } from 'lucide-react';
+import {Send, Camera, Mic, Video, Smile, Paperclip, Trash2, StopCircle, FileText, Download, MoreVertical, ShieldCheck, CheckCheck, Loader2 } from 'lucide-react';
+import { ImageMessage } from './image-message';
 import type {Message, User, Conversation} from '@/lib/types';
 import {useRef, useEffect, useState} from 'react';
 import {ScrollArea} from '../ui/scroll-area';
 import { format } from 'date-fns';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { useToast } from '@/hooks/use-toast';
+import { useEnhancedToast } from '@/hooks/use-enhanced-toast';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { deleteMessage } from '@/app/actions/chat';
 
@@ -39,7 +40,7 @@ const STICKERS = [
 const MAX_FILE_SIZE = 4 * 1024 * 1024;
 
 export function Chat({conversation, currentUser, onSendMessage}: ChatProps) {
-  const { toast } = useToast();
+  const toast = useEnhancedToast();
   const [message, setMessage] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
@@ -78,8 +79,7 @@ export function Chat({conversation, currentUser, onSendMessage}: ChatProps) {
     const file = e.target.files?.[0];
     if (file) {
         if (file.size > MAX_FILE_SIZE) {
-            toast({
-                variant: 'destructive',
+            toast.error({
                 title: 'Archivo demasiado pesado',
                 description: 'El límite técnico es de 4MB.'
             });
@@ -90,8 +90,15 @@ export function Chat({conversation, currentUser, onSendMessage}: ChatProps) {
         const reader = new FileReader();
         reader.onloadend = () => {
             const base64 = reader.result as string;
-            const fileHint = file.type.includes('pdf') ? '[PDF]' : '[DOC]';
-            onSendMessage({ message: `${fileHint}${file.name}|${base64}`, conversationId: conversation.id });
+            
+            // Si es imagen, enviar directamente como data URL
+            if (file.type.startsWith('image/')) {
+                onSendMessage({ message: base64, conversationId: conversation.id });
+            } else {
+                // Si es PDF o documento, agregar marcador
+                const fileHint = file.type.includes('pdf') ? '[PDF]' : '[DOC]';
+                onSendMessage({ message: `${fileHint}${file.name}|${base64}`, conversationId: conversation.id });
+            }
             setIsUploading(false);
         };
         reader.readAsDataURL(file);
@@ -101,9 +108,9 @@ export function Chat({conversation, currentUser, onSendMessage}: ChatProps) {
   const handleDeleteMsg = async (id: string) => {
       try {
           await deleteMessage(id);
-          toast({ title: 'Registro de mensaje eliminado' });
+          toast.success({ title: 'Registro de mensaje eliminado' });
       } catch (e) {
-          toast({ variant: 'destructive', title: 'Error' });
+          toast.error({ title: 'Error' });
       }
   };
 
@@ -144,8 +151,7 @@ export function Chat({conversation, currentUser, onSendMessage}: ChatProps) {
             setRecordingTime(prev => prev + 1);
         }, 1000);
     } catch (err) {
-        toast({
-            variant: 'destructive',
+        toast.error({
             title: 'Error de Micrófono',
             description: 'Verifique los permisos del navegador.'
         });
@@ -166,7 +172,8 @@ export function Chat({conversation, currentUser, onSendMessage}: ChatProps) {
       return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const renderMessageContent = (text: string) => {
+  const renderMessageContent = (text: string, isOwn: boolean = false) => {
+      // Archivos PDF y DOC
       if (text.startsWith('[PDF]') || text.startsWith('[DOC]')) {
           const [header, base64] = text.split('|');
           const fileName = header.replace('[PDF]', '').replace('[DOC]', '');
@@ -189,34 +196,45 @@ export function Chat({conversation, currentUser, onSendMessage}: ChatProps) {
               </div>
           );
       }
-      if (text.startsWith('data:image')) {
-          return (
-              <div className="rounded-2xl overflow-hidden border-2 border-white shadow-md mt-1 group relative">
-                  <img src={text} alt="Foto Técnica" className="max-w-full max-h-80 object-cover" />
-                  <a href={text} download="evidencia.png" className="absolute bottom-2 right-2 p-2 bg-black/60 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-md">
-                      <Download className="h-4 w-4" />
-                  </a>
-              </div>
-          );
+      
+      // Imágenes (PNG, JPG, GIF, WEBP, etc.)
+      if (text.startsWith('data:image') || /\.(png|jpg|jpeg|gif|webp)$/i.test(text)) {
+          return <ImageMessage src={text} alt="Foto Técnica" isOwn={isOwn} />;
       }
+      
+      // Audio
       if (text.startsWith('data:audio')) {
           return (
-              <div className="mt-1 min-w-[220px] bg-slate-50 p-2 rounded-2xl border border-white">
-                  <audio src={text} controls className="max-w-full h-8" />
-              </div>
+              <audio controls className="max-w-xs rounded-xl mt-1">
+                  <source src={text} type="audio/webm" />
+                  Tu navegador no soporta reproducción de audio
+              </audio>
           );
       }
-      if (text.startsWith('sticker:')) {
-          const sticker = STICKERS.find(s => s.code === text);
+      
+      // Video
+      if (text.startsWith('data:video')) {
           return (
-              <div className="flex flex-col items-center animate-in zoom-in duration-300">
-                  <div className="text-6xl drop-shadow-2xl hover:scale-110 transition-transform cursor-default py-2">
-                      {sticker?.emoji || '✨'}
-                  </div>
-              </div>
+              <video controls className="max-w-xs rounded-xl mt-1 max-h-80">
+                  <source src={text} type="video/mp4" />
+                  Tu navegador no soporta reproducción de video
+              </video>
           );
       }
-      return <p className="leading-relaxed whitespace-pre-wrap break-words text-sm font-bold tracking-tight">{text}</p>;
+      
+      // Stickers (emoji)
+      if (text.startsWith('sticker:')) {
+          const stickerCode = text.replace('sticker:', '');
+          const stickerMap: { [key: string]: string } = {
+              'wrench': '🔧', 'car': '🚗', 'check': '✅', 'alert': '⚠️',
+              'oil': '🛢️', 'tire': '🛞', 'fire': '🔥', 'cool': '😎',
+              'money': '💰', 'clock': '⏳'
+          };
+          return <span className="text-4xl">{stickerMap[stickerCode] || '👍'}</span>;
+      }
+      
+      // Texto normal
+      return <p className="text-sm leading-relaxed">{text}</p>;
   };
 
   return (
@@ -229,7 +247,7 @@ export function Chat({conversation, currentUser, onSendMessage}: ChatProps) {
             <div className="relative">
                 <Avatar className="h-10 w-10 border-2 border-primary/10 shadow-sm">
                 <AvatarImage 
-                    src={conversation.otherParticipant?.avatarUrl} 
+                    src={conversation.otherParticipant?.avatarUrl || undefined} 
                     alt={conversation.otherParticipant?.name} 
                 />
                 <AvatarFallback className="bg-primary/5 text-primary text-xs font-black">{getInitials(conversation.otherParticipant?.name || 'U')}</AvatarFallback>
@@ -283,7 +301,7 @@ export function Chat({conversation, currentUser, onSendMessage}: ChatProps) {
                                 : (isSticker ? '' : 'bg-white text-slate-900 border-2 border-slate-100 rounded-tl-none')
                             )}
                         >
-                            {renderMessageContent(msg.text)}
+                            {renderMessageContent(msg.text, isOwn)}
                             
                             <div className={cn(
                                 "flex items-center gap-1.5 mt-2 opacity-50",

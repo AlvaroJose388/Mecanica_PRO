@@ -16,8 +16,12 @@ export async function getAllUsers(): Promise<User[]> {
     avatarUrl: users.avatarUrl,
     workshopId: users.workshopId,
     passwordHash: users.passwordHash,
+    createdAt: users.createdAt,
   }).from(users);
-  return result.map(({ passwordHash, ...user }) => user as User);
+  return result.map(({ passwordHash, createdAt, ...user }) => ({
+    ...user,
+    createdAt: createdAt ? new Date(createdAt).toISOString() : new Date().toISOString(),
+  })) as User[];
 }
 
 export async function createUser(userData: User): Promise<User> {
@@ -34,9 +38,11 @@ export async function createUser(userData: User): Promise<User> {
   };
   
   const result = await db.insert(users).values(newUser).returning();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { passwordHash: _, ...userToReturn } = result[0];
-  return userToReturn as User;
+  return {
+    ...userToReturn,
+    createdAt: userToReturn.createdAt ? new Date(userToReturn.createdAt).toISOString() : new Date().toISOString(),
+  } as User;
 }
 
 export async function updateUser(userId: string, userData: Partial<User>): Promise<User> {
@@ -49,9 +55,11 @@ export async function updateUser(userId: string, userData: Partial<User>): Promi
   delete updateData.password;
   
   const result = await db.update(users).set(updateData).where(eq(users.id, userId)).returning();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { passwordHash, ...userToReturn } = result[0];
-  return userToReturn as User;
+  return {
+    ...userToReturn,
+    createdAt: userToReturn.createdAt ? new Date(userToReturn.createdAt).toISOString() : new Date().toISOString(),
+  } as User;
 }
 
 export async function deleteUser(userId: string): Promise<{ success: boolean }> {

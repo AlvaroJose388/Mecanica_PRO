@@ -15,7 +15,7 @@ export async function getInventoryForWorkshop(workshopId: string): Promise<Inven
   const results = await db.select().from(inventory).where(eq(inventory.workshopId, workshopId));
   return results.map(item => ({
     ...item,
-    price: Number(item.price) // Convert string from DB to number
+    price: Number(item.price) // Convert string from DB to number.
   }));
 }
 
@@ -26,7 +26,7 @@ export async function createInventoryItem(itemData: Partial<InventoryItem>): Pro
     const newItem = {
         id: `inv-item-${uuidv4()}`,
         workshopId: itemData.workshopId,
-        branchId: itemData.branchId || 'main', // Default branch if not provided
+        branchId: itemData.branchId || 'main', // Default branch if not provided..
         name: itemData.name,
         sku: itemData.sku || '',
         quantity: itemData.quantity,

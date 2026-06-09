@@ -60,4 +60,7 @@ MecanicaPro utiliza un motor de datos de última generación diseñado para la a
 ---
 **MecanicaPro** - Ingeniería aplicada a la excelencia operativa automotriz.
 
+<<<<<<< HEAD
 # Importante
+=======
+>>>>>>> b0e69778051ad66e4e2c53c8e570e9c74f37e02b
