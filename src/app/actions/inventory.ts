@@ -15,22 +15,23 @@ export async function getInventoryForWorkshop(workshopId: string): Promise<Inven
   const results = await db.select().from(inventory).where(eq(inventory.workshopId, workshopId));
   return results.map(item => ({
     ...item,
-    price: Number(item.price) // Convert string from DB to number
+    price: Number(item.price) // Convert string from DB to number.
   }));
 }
 
 export async function createInventoryItem(itemData: Partial<InventoryItem>): Promise<InventoryItem> {
-    if (!itemData.workshopId || !itemData.name || itemData.price === undefined || itemData.quantity === undefined) {
-        throw new Error('Faltan datos para crear el artículo.');
+    if (!itemData.workshopId || !itemData.branchId || !itemData.name || itemData.price === undefined || itemData.quantity === undefined) {
+        throw new Error('Faltan datos requeridos: workshopId, branchId, nombre, precio y cantidad son obligatorios.');
     }
     const newItem = {
         id: `inv-item-${uuidv4()}`,
         workshopId: itemData.workshopId,
-        branchId: itemData.branchId || 'main', // Default branch if not provided
+        branchId: itemData.branchId,
         name: itemData.name,
         sku: itemData.sku || '',
         quantity: itemData.quantity,
         price: itemData.price.toString(),
+        minStock: itemData.minStock ?? 5,
     };
     const [result] = await db.insert(inventory).values(newItem).returning();
     revalidatePath('/inventory');
@@ -38,20 +39,26 @@ export async function createInventoryItem(itemData: Partial<InventoryItem>): Pro
 }
 
 export async function updateInventoryItem(itemId: string, itemData: Partial<InventoryItem>): Promise<InventoryItem> {
+    if (!itemId) {
+        throw new Error('ID del artículo es requerido para actualizar.');
+    }
     const updateData: any = { ...itemData };
+    delete updateData.id; // Prevent updating the ID
+    
     if (itemData.price !== undefined) {
       updateData.price = itemData.price.toString();
     }
-    const [result] = await db.update(inventory)
+    
+    const result = await db.update(inventory)
         .set(updateData)
         .where(eq(inventory.id, itemId))
         .returning();
 
-    if (!result) {
-        throw new Error('No se pudo encontrar el artículo para actualizar.');
+    if (!result || result.length === 0) {
+        throw new Error('No se pudo encontrar el artículo para actualizar. Verifica que el ID sea correcto.');
     }
     revalidatePath('/inventory');
-    return { ...result, price: Number(result.price) };
+    return { ...result[0], price: Number(result[0].price) };
 }
 
 export async function deleteInventoryItem(itemId: string): Promise<{ success: boolean }> {

@@ -15,7 +15,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
-// ENUMS
+// ENUMS.
 export const userRole = pgEnum('user_role', ['SuperAdmin', 'TallerAdmin', 'Recepcionista', 'Mechanic']);
 export const subscriptionPlan = pgEnum('subscription_plan', ['Basic', 'Premium']);
 export const orderStatus = pgEnum('order_status', ['Pending', 'InProgress', 'Ready', 'Completed', 'Cancelled']);
@@ -23,7 +23,7 @@ export const invoiceStatus = pgEnum('invoice_status', ['Paid', 'Pending', 'Overd
 export const workshopType = pgEnum('workshop_type', ['Automotriz', 'Motos', 'Camiones', 'Mixto']);
 export const supportTicketStatus = pgEnum('support_ticket_status', ['Open', 'Closed']);
 
-// TABLES
+// TABLES..
 export const users = pgTable('users', {
   id: varchar('id', { length: 255 }).primaryKey(),
   name: varchar('name', { length: 255 }).notNull(),

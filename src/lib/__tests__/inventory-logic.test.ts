@@ -12,7 +12,7 @@
 import type { InventoryItem } from '../types';
 
 // ============================================================
-// LÓGICA DE NEGOCIO PARA INVENTARIO
+// LÓGICA DE NEGOCIO PARA INVENTARIO..
 // ============================================================
 
 const LOW_STOCK_THRESHOLD = 5;
