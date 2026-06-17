@@ -31,7 +31,7 @@ export async function createInventoryItem(itemData: Partial<InventoryItem>): Pro
         sku: itemData.sku || '',
         quantity: itemData.quantity,
         price: itemData.price.toString(),
-        minStock: itemData.minStock,
+        minStock: itemData.minStock ?? 5,
     };
     const [result] = await db.insert(inventory).values(newItem).returning();
     revalidatePath('/inventory');
